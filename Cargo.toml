@@ -1,9 +1,19 @@
 [package]
 name = "moves-still-count"
 version = "0.1.0"
-authors = ["Clifford T. Matthews <ctm@devctm.com>"]
+authors = ["Clifford T. Matthews <clifford.t.matthews@gmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+fantoccini = "0.14"
+structopt = "0.3.9"
+anyhow = "1.0"
+serde_json = "1.0.40"
+
+[dependencies.tokio]
+# Can't use tokio 0.3.3 yet because fantoccini itself uses 0.2.22
+# version = "0.3.3"
+version = "0.2.22"
+features = ["macros", "time"]
