@@ -24,8 +24,16 @@ async fn main() -> Result<()> {
     caps.insert("moz:firefoxOptions".to_string(), firefox_opts);
 
     let mut c = Client::with_capabilities("http://localhost:4444", caps).await?;
-    c.goto("https://www.movescount.com/auth?redirect_uri=%2flatestmove")
-        .await?;
+    let string;
+    let path = match opt.move_number {
+        None => "latestmove",
+        Some(n) => {
+            string = format!("moves%2fmove{}", n);
+            &string
+        }
+    };
+    let url = format!("https://www.movescount.com/auth?redirect_uri=%2f{}", path);
+    c.goto(&url).await?;
 
     // Need to fill in name and password
     let mut email = c.find(Css("#splEmail")).await?;
@@ -40,8 +48,10 @@ async fn main() -> Result<()> {
     let tools = c.wait_for_find(LinkText("Tools")).await?;
     tools.click().await?;
 
-    let export = c.wait_for_find(LinkText("Export as GPX")).await?;
-    export.click().await?;
+    if opt.export {
+        let export = c.wait_for_find(LinkText("Export as GPX")).await?;
+        export.click().await?;
+    }
 
     Ok(())
 }
@@ -52,4 +62,8 @@ pub struct Opt {
     /// See the webpage as results are gathered
     #[structopt(short = "d", long = "display")]
     pub display: bool,
+    #[structopt(short = "e", long = "export")]
+    pub export: bool,
+    #[structopt()]
+    pub move_number: Option<i32>,
 }
