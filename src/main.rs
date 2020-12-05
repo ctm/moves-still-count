@@ -1,69 +1,72 @@
+mod move_scraper;
+
 use {
+    crate::move_scraper::{DatedMoves, Month, MoveScraper, Year},
     anyhow::Result,
-    fantoccini::{
-        Client,
-        Locator::{Css, LinkText},
+    chrono::NaiveDate,
+    std::{
+        env,
+        fs::File,
+        io::{ErrorKind, Read},
     },
-    std::env,
     structopt::StructOpt,
 };
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     let name = env::var("MOVESCOUNT_NAME")?;
     let password = env::var("MOVESCOUNT_PASSWORD")?;
     let opt = Opt::from_args();
 
-    let mut caps = serde_json::map::Map::new();
+    let mut dated_moves = saved_moves()?;
+    let mut scraper = MoveScraper::new(&name, &password)?;
+    // scraper.set_year_and_month(opt.year, opt.month)?;
+    // let mut dated_moves = scraper.moves_from_page()?;
+    // scraper.advance_month()?;
+    // dated_moves.extend(scraper.moves_from_page()?.into_iter());
 
-    let firefox_opts = if opt.display {
-        serde_json::json!({ "args": [] })
-    } else {
-        serde_json::json!({ "args": ["--headless"] })
-    };
-    caps.insert("moz:firefoxOptions".to_string(), firefox_opts);
+    // let start = NaiveDate::from_ymd(2020, 4, 15);
+    // let stop = NaiveDate::from_ymd(2020, 6, 15);
+    // let dated_moves = scraper.moves_for_range(&(start..stop));
 
-    let mut c = Client::with_capabilities("http://localhost:4444", caps).await?;
-    let string;
-    let path = match opt.move_number {
-        None => "latestmove",
-        Some(n) => {
-            string = format!("moves%2fmove{}", n);
-            &string
-        }
-    };
-    let url = format!("https://www.movescount.com/auth?redirect_uri=%2f{}", path);
-    c.goto(&url).await?;
-
-    // Need to fill in name and password
-    let mut email = c.find(Css("#splEmail")).await?;
-    email.send_keys(&name).await?;
-
-    let mut pass = c.find(Css("#splPassword")).await?;
-    pass.send_keys(&password).await?;
-
-    let button = c.find(Css("#splLoginButton")).await?;
-    button.click().await?;
-
-    let tools = c.wait_for_find(LinkText("Tools")).await?;
-    tools.click().await?;
-
-    if opt.export {
-        let export = c.wait_for_find(LinkText("Export as GPX")).await?;
-        export.click().await?;
+    let start = NaiveDate::from_ymd(opt.year.into(), opt.month.into(), 1);
+    let scraped_moves = scraper.moves_for_range(&(start..))?;
+    move_scraper::merge(&mut dated_moves, &scraped_moves);
+    save_moves(&dated_moves)?;
+    // eprintln!("dated_moves: {:#?}", dated_moves);
+    let mut been_here = false;
+    for dmove in dated_moves {
+        scraper.save_html_moves(&dmove)?;
+        scraper.export_moves(&dmove, &mut been_here, opt.export)?;
     }
-
     Ok(())
+}
+
+const SAVED_MOVES_FILENAME: &str = "saved_moves.json";
+
+fn saved_moves() -> Result<Vec<DatedMoves>> {
+    match File::open(SAVED_MOVES_FILENAME) {
+        Ok(mut file) => {
+            let mut data = String::new();
+            file.read_to_string(&mut data)?;
+            serde_json::from_str(&data).map_err(|e| e.into())
+        }
+        Err(e) if e.kind() == ErrorKind::NotFound => Ok(Vec::new()),
+        Err(other) => Err(other.into()),
+    }
+}
+
+fn save_moves(moves: &[DatedMoves]) -> Result<()> {
+    let mut file = File::create(SAVED_MOVES_FILENAME)?;
+    serde_json::to_writer(&mut file, moves).map_err(|e| e.into())
 }
 
 #[derive(StructOpt, Debug)]
 #[structopt()]
 pub struct Opt {
-    /// See the webpage as results are gathered
-    #[structopt(short = "d", long = "display")]
-    pub display: bool,
-    #[structopt(short = "e", long = "export")]
+    #[structopt(short = "e", long)]
     pub export: bool,
-    #[structopt()]
-    pub move_number: Option<i32>,
+    #[structopt(short = "y", long, default_value)]
+    year: Year,
+    #[structopt(short = "m", long, default_value)]
+    month: Month,
 }

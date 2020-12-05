@@ -7,13 +7,10 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-fantoccini = "0.14"
+thirtyfour_sync = "0.21.1"
 structopt = "0.3.9"
 anyhow = "1.0"
+serde = "1.0"
 serde_json = "1.0.40"
-
-[dependencies.tokio]
-# Can't use tokio 0.3.3 yet because fantoccini itself uses 0.2.22
-# version = "0.3.3"
-version = "0.2.22"
-features = ["macros", "time"]
+chrono = "0.4"
+glob = "0.3"
