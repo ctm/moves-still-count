@@ -1,4 +1,9 @@
-# moves-still-count
+## convert-moves
+
+Converts the .sml files left in /Library/Application&nbsp;Support/Suunto/Moveslink2/
+to GPX files suitable for uploading to Strava.
+
+## retrieve-moves
 
 A little web scraper that can extract GPX files from Movescount (the web
 site used by Suunto)
@@ -10,7 +15,7 @@ Then you have these options:
 
 ```
 USAGE:
-    moves-still-count [FLAGS] [OPTIONS]
+    retrieve-moves [FLAGS] [OPTIONS]
 
 FLAGS:
     -e, --export     
@@ -33,7 +38,7 @@ my moves, I've had to hand-hold the app and run it a few times to do
 so.  I've changed some of the sleep durations between passes.  There
 really shouldn't be any "long" sleeps, but there are due to my
 laziness.  For example, when a GPX file is downloaded,
-moves-still-count should just wait for the file to be created and to
+retrieve-moves should just wait for the file to be created and to
 end with &lt;/html> instead of sleeping some number of seconds.
 
 Additionally, this code is slow since it uses glob each time it's
@@ -53,5 +58,5 @@ comfort zone now and then.
 
 ## Public Domain
 
-I have released moves-still-count into the public domain, per the
+I have released retrieve-moves into the public domain, per the
 [UNLICENSE](UNLICENSE).

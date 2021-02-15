@@ -1,0 +1,13 @@
+[package]
+name = "convert-moves"
+version = "0.1.0"
+authors = ["Clifford T. Matthews <clifford.t.matthews@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+xml-rs = "0.8"
+structopt = "0.3.9"
+anyhow = "1.0"
+chrono = "0.4"

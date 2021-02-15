@@ -109,6 +109,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "convert-moves"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "structopt",
+ "xml-rs",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -506,19 +516,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "moves-still-count"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "glob",
- "serde",
- "serde_json",
- "structopt",
- "thirtyfour_sync",
-]
-
-[[package]]
 name = "native-tls"
 version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -828,6 +825,19 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "winreg",
+]
+
+[[package]]
+name = "retrieve-moves"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "glob",
+ "serde",
+ "serde_json",
+ "structopt",
+ "thirtyfour_sync",
 ]
 
 [[package]]
@@ -1374,3 +1384,9 @@ checksum = "0120db82e8a1e0b9fb3345a539c478767c0048d842860994d96113d5b667bd69"
 dependencies = [
  "winapi",
 ]
+
+[[package]]
+name = "xml-rs"
+version = "0.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b07db065a5cf61a7e4ba64f29e67db906fb1787316516c4e6e5ff0fea1efcd8a"

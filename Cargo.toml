@@ -1,16 +1,5 @@
-[package]
-name = "moves-still-count"
-version = "0.1.0"
-authors = ["Clifford T. Matthews <clifford.t.matthews@gmail.com>"]
-edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-thirtyfour_sync = "0.22.2"
-structopt = "0.3.9"
-anyhow = "1.0"
-serde = "1.0"
-serde_json = "1.0.40"
-chrono = "0.4"
-glob = "0.3"
+[workspace]
+members = [
+  "retrieve-moves",
+  "convert-moves"
+]

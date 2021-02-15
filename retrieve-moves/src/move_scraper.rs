@@ -454,7 +454,7 @@ impl Year {
     const MAX_YEAR: u16 = 2021;
 
     fn new(value: u16) -> Option<Self> {
-        if value < Self::MIN_YEAR || value > Self::MAX_YEAR {
+        if !(Self::MIN_YEAR..=Self::MAX_YEAR).contains(&value) {
             return None;
         }
         let u: Option<u8> = (value - Self::MIN_YEAR).try_into().ok();
@@ -530,7 +530,7 @@ impl Month {
     const MAX_MONTH: u8 = 12;
 
     fn new(value: u8) -> Option<Self> {
-        if value < Self::MIN_MONTH || value > Self::MAX_MONTH {
+        if !(Self::MIN_MONTH..=Self::MAX_MONTH).contains(&value) {
             return None;
         }
         NonZeroU8::new(value).map(Self)
