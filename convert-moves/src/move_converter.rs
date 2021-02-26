@@ -116,7 +116,13 @@ trait DumpToGpx {
 
 impl DumpToGpx for SampleRec {
     fn dump(&self, writer: &mut EventWriter) -> Result<()> {
-        TryInto::<TrkPt>::try_into(self)?.dump(writer)
+        match TryInto::<TrkPt>::try_into(self) {
+            Ok(pt) => pt.dump(writer),
+            Err(e) => {
+                eprintln!("dropping {:?}: {:?}", self, e);
+                Ok(())
+            }
+        }
     }
 }
 
